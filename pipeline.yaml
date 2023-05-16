@@ -1,0 +1,31 @@
+name: $(BuildDefinitionName)_$(date:yyyyMMdd)$(rev:.r)
+
+trigger: none
+
+# Don't run against PRs
+pr: none
+
+variables:
+  - name: repository
+    value: 'devopsjourney'
+  - name: dockerfilePath
+    value: '$(Build.SourcesDirectory)/Azure-DevOps-Docker-Image-To-ACR/aspnet-core-dotnet-core/Dockerfile'
+  - name: containerRegistry
+    value: 'containerRegistry00213434'
+
+stages :
+  - stage: Build
+    displayName: Build and push stage
+    jobs:  
+    - job: Build
+      displayName: Build job
+      steps:
+      - task: Docker@2
+        displayName: Build and push an image to container registry
+        inputs:
+          command: buildAndPush
+          repository: $(repository)
+          dockerfile: $(dockerfilePath)
+          containerRegistry: $(containerRegistry)
+          tags: $(Build.BuildId)
+
